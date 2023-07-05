@@ -23,11 +23,12 @@ def create_user(request, **kwargs):
 def login_user(request, **kwargs):
     email = request.data['email']
     passw = request.data['password']
-    user = User.objects.get(email)
+    user = User.objects.get(pk=email)
+    # print(user.password)
     if not user:
         return Response("User Doesnt Exist")
     flag = check_password(password=passw, encoded=user.password)
-
+    # print(flag)
     if not flag:
         return Response("Incorrect Email or Password")
     return Response("Logged In")
