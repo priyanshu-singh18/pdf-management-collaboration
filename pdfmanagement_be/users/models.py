@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.postgres.fields import ArrayField
+
 
 class UserModel(AbstractUser):
     id = models.AutoField(primary_key=True, unique=True,null=False)
@@ -7,6 +9,7 @@ class UserModel(AbstractUser):
     username = models.EmailField(
  null=False, default="DUMMY_EMAIL",unique=True,blank=False)
     password = models.CharField(max_length=256, blank=True)
+    access_shared_ids = ArrayField(models.IntegerField(blank=True,null=True),size=20,null=True)
 
     USERNAME_FIELD = 'username'
     PASSWORD_FIELD = 'password'

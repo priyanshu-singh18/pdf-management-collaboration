@@ -50,3 +50,46 @@ def fetch_file(request, **kwargs):
     # r = HttpResponse(body_contents, mimetype='application/pdf')
 
     return Response(responseList)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def shared_files(request, **kwargss):
+    user_email = request.user.username
+    
+    if not user_email:
+        return Response("Error in finding user")
+    
+    user = UserModel.objects.filter(username=user_email)
+    
+    response = []
+
+    for file_id in user[0].access_shared_ids:
+        obj = Upload.objects.get(file_id = file_id) 
+        if not obj:
+            continue
+        del obj.__dict__['_state']
+        data = base64.b64encode(obj.__dict__['uploaded_file'])
+        obj.__dict__['uploaded_file'] = data
+        response.append(obj.__dict__)
+
+    return Response(response)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def share_file(request, **kwargss):
+    user_email = request.user.username
+    
+    
+    share_to = request.data['share_to']
+    file_id = request.data['file_id']
+    user = UserModel.objects.get(username = share_to)
+    if not user:
+        return Response("Error in finding user")
+    
+    user.access_shared_ids.append(file_id)
+    
+    user.save()
+    print(user.access_shared_ids)
+
+    
+    return Response("Share Working")
