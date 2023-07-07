@@ -17,7 +17,7 @@ def signup(request):
         name = request.data['name']
         password = request.data['password']
 
-        if UserModel.objects.filter(pk=username).exists():
+        if UserModel.objects.filter(username=username).exists():
             return Response({"message": "You are already Registered"}, status=status.HTTP_400_BAD_REQUEST)
         user = UserModel.objects.create(username=username,name=name)
         user.set_password(password)
