@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./LoginComponent.css";
 import axios from "axios";
+import { redirect, useNavigate } from "react-router-dom";
 
 const getToken = async (credentials) => {
   const token = await axios.post(
@@ -12,32 +13,76 @@ const getToken = async (credentials) => {
       },
     }
   );
-  console.log(token.data);
+  // console.log(token.data);
+  return token.data;
 };
 
 export default function LoginComponent() {
-  const [username, setUsername] = useState();
-  const [password, setPassword] = useState();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [tokenAvailable, setTokenAvailable] = useState(
+    sessionStorage.getItem("token") || false
+  );
+  const navigate = useNavigate();
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [error, setError] = useState("");
 
-  const formSubmitHandler = (e) => {
+  // console.log(tokenAvailable);
+
+  useEffect(() => {
+    if (tokenAvailable) {
+      navigate("/dashboard");
+    }
+  }, []);
+
+  useEffect(() => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isValidEmail = emailRegex.test(username);
+
+    const isValidPassword = password.length >= 6;
+
+    setIsButtonDisabled(!isValidEmail || !isValidPassword);
+  }, [username, password]);
+
+  const formSubmitHandler = async (e) => {
     e.preventDefault();
-    getToken({ username: username, password: password });
+
+    try {
+      const token = await getToken({ username: username, password: password });
+      sessionStorage.setItem("token", token.access);
+      navigate("/dashboard");
+    } catch (error) {
+      setError("Invalid username or password");
+    }
   };
 
-  return (
+  return tokenAvailable ? (
+    ""
+  ) : (
     <form onSubmit={formSubmitHandler}>
       <label>
         <p>Email</p>
-        <input type="email" onChange={(e) => setUsername(e.target.value)} />
+        <input
+          type="email"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
       </label>
 
       <label>
         <p>Password</p>
-        <input type="password" onChange={(e) => setPassword(e.target.value)} />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
       </label>
+      {error && <p className="error-message">{error}</p>}
 
       <div>
-        <button type="submit">Submit</button>
+        <button type="submit" disabled={isButtonDisabled}>
+          Submit
+        </button>
       </div>
     </form>
   );
