@@ -1,5 +1,19 @@
 import React, { useState } from "react";
 import "./LoginComponent.css";
+import axios from "axios";
+
+const getToken = async (credentials) => {
+  const token = await axios.post(
+    "http://localhost:8000/users/login",
+    JSON.stringify(credentials),
+    {
+      headers: {
+        "content-type": "application/json",
+      },
+    }
+  );
+  console.log(token.data);
+};
 
 export default function LoginComponent() {
   const [username, setUsername] = useState();
@@ -7,7 +21,7 @@ export default function LoginComponent() {
 
   const formSubmitHandler = (e) => {
     e.preventDefault();
-    console.log(username, password);
+    getToken({ username: username, password: password });
   };
 
   return (

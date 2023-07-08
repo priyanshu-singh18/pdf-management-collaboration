@@ -31,8 +31,8 @@ def signup(request):
 
 
 @api_view(['POST'])
-def login(request):
-
+def login(request,**kwargs):
+    print(request.data)
     if request.method == 'POST':
         username = request.data['username']
         password = request.data['password']
