@@ -62,6 +62,8 @@ def shared_files(request, **kwargss):
     user = UserModel.objects.filter(username=user_email)
     
     response = []
+    if user[0].access_shared_ids == None:
+        return Response([]) 
 
     for file_id in user[0].access_shared_ids:
         obj = Upload.objects.get(file_id = file_id) 

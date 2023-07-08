@@ -3,6 +3,7 @@ import axios from "axios";
 import PdfPreview from "../pdfpreview/PdfPreview";
 import "./Dashboards.css";
 import { useNavigate } from "react-router-dom";
+import ListItem from "./ListItem";
 
 function parseJwt(token) {
   var base64Url = token.split(".")[1];
@@ -24,8 +25,12 @@ export default function Dashboard() {
   const [userdata, setUserdata] = useState([]);
   const [shareddata, setShareddata] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [uploaded_file, setUploaded_file] = useState();
+
+  const [isView, setIsView] = useState(false);
+  const [filedata, setFiledata] = useState();
+
   const navigate = useNavigate();
+
   useEffect(() => {
     (async () => {
       const token = sessionStorage.getItem("token");
@@ -62,15 +67,52 @@ export default function Dashboard() {
     })();
   }, []);
 
-  console.log(userdata);
-  console.log(shareddata);
+  const handleItemClick = (val) => {
+    const temp = userdata?.filter((item) => item.file_id == val);
+    console.log(temp[0]);
+    setFiledata(temp[0].uploaded_file);
+    setIsView(true);
+  };
 
-  const files1 = userdata?.map((item) => {
-    return <li>{item.uploaded_by_email}</li>;
-  });
-  const files2 = shareddata?.map((item) => {
-    return <li>{item.uploaded_by_email}</li>;
-  });
+  // console.log(userdata);
+  // console.log(shareddata);
+
+  const files1 =
+    userdata.length > 0 ? (
+      userdata?.map((item, index) => {
+        return (
+          <ListItem
+            key={item.file_id}
+            serial={index + 1}
+            name={`File ${index + 1}`}
+            uploaded_by={item.uploaded_by_email}
+            uploaded_at={item.uploaded_at}
+            clickedItem={handleItemClick}
+            file_id={item.file_id}
+          />
+        );
+      })
+    ) : (
+      <p>Upload Files First</p>
+    );
+  const files2 =
+    shareddata.length > 0 ? (
+      shareddata?.map((item, index) => {
+        return (
+          <ListItem
+            key={item.item_id}
+            serial={index + 1}
+            name={`File ${index + 1}`}
+            uploaded_by={item.uploaded_by_email}
+            uploaded_at={item.uploaded_at}
+            file_id={item.file_id}
+            clickedItem={handleItemClick}
+          />
+        );
+      })
+    ) : (
+      <p>You Dont have Shared Files</p>
+    );
 
   const handleLogout = () => {
     sessionStorage.clear();
@@ -88,7 +130,8 @@ export default function Dashboard() {
         <h1>Shared Files</h1>
         <ul>{files2}</ul>
       </div>
-      {!isLoading && <PdfPreview file_data={userdata[2]?.uploaded_file} />}
+      {/* {isView && <PdfPreview file_data={userdata[2]?.uploaded_file} />} */}
+      {isView && <PdfPreview file_data={filedata} />}
     </div>
   );
 }
