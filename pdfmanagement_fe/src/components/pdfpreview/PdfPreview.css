@@ -1,0 +1,20 @@
+.pdf-view-container {
+  border: 1px solid black;
+  padding: 16px;
+  width: 650px;
+  margin: 20px;
+  margin-left: 300px;
+  border-radius: 12px;
+}
+
+.pdf-view-container nav {
+  margin-bottom: 16px;
+}
+
+.pdf-view-container button {
+  margin-right: 8px;
+}
+
+.pdf-view-container p {
+  margin: 0;
+}

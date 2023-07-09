@@ -4,21 +4,21 @@ import { pdfjs } from "react-pdf";
 import { useRecoilState } from "recoil";
 import { filedatastate } from "../../context/filedataState";
 import { useNavigate } from "react-router-dom";
+import "./PdfPreview.css";
 
 export default function PdfPreview() {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
-  const file_data = useRecoilState(filedatastate)
-  const navigate = useNavigate()
+  const file_data = useRecoilState(filedatastate);
+  const navigate = useNavigate();
 
-  if(file_data===""){
-    navigate("/dashboard")
-    return
+  if (file_data === "") {
+    navigate("/dashboard");
+    return;
   }
   //   console.log(atob(props.file_data));
   pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
   const linkSource = `data:application/pdf;base64,${file_data}`;
-
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
@@ -32,7 +32,14 @@ export default function PdfPreview() {
 
   // const file = byte_to_array(props.file_data);
   return (
-    <div>
+    <div className="pdf-view-container">
+      <Document file={linkSource} onLoadSuccess={onDocumentLoadSuccess}>
+        <Page
+          pageNumber={pageNumber}
+          renderAnnotationLayer={false}
+          renderTextLayer={false}
+        />
+      </Document>
       <nav>
         <button onClick={goToPrevPage}>Prev</button>
         <button onClick={goToNextPage}>Next</button>
@@ -40,10 +47,6 @@ export default function PdfPreview() {
           Page {pageNumber} of {numPages}
         </p>
       </nav>
-
-      <Document file={linkSource} onLoadSuccess={onDocumentLoadSuccess}>
-        <Page pageNumber={pageNumber} renderTextLayer={false} />
-      </Document>
     </div>
   );
 }

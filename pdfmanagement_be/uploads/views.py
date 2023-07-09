@@ -15,7 +15,8 @@ import json
 @permission_classes([IsAuthenticated])
 def upload_file(request, **kwargs):
     parser_classes = [MultiPartParser, FileUploadParser, FormParser]
-    file = request.FILES['uploaded_file']
+    print(request.FILES)
+    file = request.FILES['file']
     print(file.content_type)
     file= file.read()
     # print(type(file))
@@ -43,7 +44,7 @@ def fetch_file(request, **kwargs):
         data = base64.b64encode(file_data)
         x.__dict__['uploaded_file'] = data
         responseList.append(x.__dict__)
-    print(responseList)
+    # print(responseList)
 
     # with open(file_data, "wb") as f:
     #     f.write(base64.b64decode(data))

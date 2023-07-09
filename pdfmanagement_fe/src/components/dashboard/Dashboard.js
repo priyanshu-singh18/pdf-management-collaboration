@@ -30,16 +30,13 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const setFileData = useSetRecoilState(filedatastate);
 
-  const [isView, setIsView] = useState(false);
-  const [filedata, setFiledata] = useState();
-  const [pdfViewFileData, setPdfViewFileData] = useState();
+  const [formdata, setFormdata] = useState();
 
   const navigate = useNavigate();
+  const token = sessionStorage.getItem("token");
 
   useEffect(() => {
     (async () => {
-      const token = sessionStorage.getItem("token");
-
       if (!token) {
         navigate("/");
         return;
@@ -85,8 +82,36 @@ export default function Dashboard() {
     navigate("/pdfview");
   };
 
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+
+    const formData = new FormData();
+    formData.append("file", file);
+    setFormdata(formData);
+  };
+
+  const handleUploadButton = async () => {
+    const resp = await axios.post(
+      "http://127.0.0.1:8000/uploads/upload",
+      formdata,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    // console.log(resp);
+    window.location.reload(false);
+  };
+
   // console.log(userdata);
   // console.log(shareddata);
+
+  const handleLogout = () => {
+    sessionStorage.clear();
+    navigate("/");
+  };
 
   const files1 =
     userdata.length > 0 ? (
@@ -125,22 +150,23 @@ export default function Dashboard() {
       <p>You Dont have Shared Files</p>
     );
 
-  const handleLogout = () => {
-    sessionStorage.clear();
-    navigate("/");
-  };
-
   return (
     <>
       <div className="container">
-        <button onClick={handleLogout}>Logout</button>
-        <div>
+        <input type="file" onChange={handleFileUpload} />
+        <button onClick={handleLogout} className="logout-button">
+          Logout
+        </button>
+        <button onClick={handleUploadButton} className="logout-button">
+          Upload
+        </button>
+        <div className="files-container">
           <h1>Your Files</h1>
-          <ul>{files1}</ul>
+          <ul className="file-list">{files1}</ul>
         </div>
-        <div>
+        <div className="files-container">
           <h1>Shared Files</h1>
-          <ul>{files2}</ul>
+          <ul className="file-list">{files2}</ul>
         </div>
         {/* {isView && <PdfPreview file_data={userdata[2]?.uploaded_file} />} */}
       </div>
