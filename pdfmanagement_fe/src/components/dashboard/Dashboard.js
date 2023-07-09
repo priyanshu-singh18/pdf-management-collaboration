@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import PdfPreview from "../pdfpreview/PdfPreview";
 import "./Dashboards.css";
-import { useNavigate } from "react-router-dom";
+import { Route, useNavigate } from "react-router-dom";
 import ListItem from "./ListItem";
+import PdfViewPage from "./PdfViewPage";
+import { useSetRecoilState } from "recoil";
+import { filedatastate } from "../../context/filedataState";
 
 function parseJwt(token) {
   var base64Url = token.split(".")[1];
@@ -25,15 +28,23 @@ export default function Dashboard() {
   const [userdata, setUserdata] = useState([]);
   const [shareddata, setShareddata] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const setFileData = useSetRecoilState(filedatastate);
 
   const [isView, setIsView] = useState(false);
   const [filedata, setFiledata] = useState();
+  const [pdfViewFileData, setPdfViewFileData] = useState();
 
   const navigate = useNavigate();
 
   useEffect(() => {
     (async () => {
       const token = sessionStorage.getItem("token");
+
+      if (!token) {
+        navigate("/");
+        return;
+      }
+
       const { exp } = parseJwt(token);
       if (Date.now() >= exp * 1000) {
         console.log(false);
@@ -70,8 +81,8 @@ export default function Dashboard() {
   const handleItemClick = (val) => {
     const temp = userdata?.filter((item) => item.file_id == val);
     console.log(temp[0]);
-    setFiledata(temp[0].uploaded_file);
-    setIsView(true);
+    setFileData(temp[0].uploaded_file);
+    navigate("/pdfview");
   };
 
   // console.log(userdata);
@@ -120,18 +131,19 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="container">
-      <button onClick={handleLogout}>Logout</button>
-      <div>
-        <h1>Your Files</h1>
-        <ul>{files1}</ul>
+    <>
+      <div className="container">
+        <button onClick={handleLogout}>Logout</button>
+        <div>
+          <h1>Your Files</h1>
+          <ul>{files1}</ul>
+        </div>
+        <div>
+          <h1>Shared Files</h1>
+          <ul>{files2}</ul>
+        </div>
+        {/* {isView && <PdfPreview file_data={userdata[2]?.uploaded_file} />} */}
       </div>
-      <div>
-        <h1>Shared Files</h1>
-        <ul>{files2}</ul>
-      </div>
-      {/* {isView && <PdfPreview file_data={userdata[2]?.uploaded_file} />} */}
-      {isView && <PdfPreview file_data={filedata} />}
-    </div>
+    </>
   );
 }

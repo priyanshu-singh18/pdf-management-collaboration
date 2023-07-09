@@ -1,14 +1,24 @@
 import React, { useState } from "react";
 import { Document, Page } from "react-pdf";
 import { pdfjs } from "react-pdf";
+import { useRecoilState } from "recoil";
+import { filedatastate } from "../../context/filedataState";
+import { useNavigate } from "react-router-dom";
 
-export default function PdfPreview(props) {
-  //   console.log(atob(props.file_data));
-  pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
-  const linkSource = `data:application/pdf;base64,${props.file_data}`;
-
+export default function PdfPreview() {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
+  const file_data = useRecoilState(filedatastate)
+  const navigate = useNavigate()
+
+  if(file_data===""){
+    navigate("/dashboard")
+    return
+  }
+  //   console.log(atob(props.file_data));
+  pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+  const linkSource = `data:application/pdf;base64,${file_data}`;
+
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);

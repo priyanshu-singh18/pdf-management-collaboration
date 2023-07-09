@@ -49,6 +49,6 @@ def login(request,**kwargs):
                     "refresh": str(refresh)
                 })
             else:
-                return Response({"message":"Enter correct Password. Forgot?"})
+                return Response({"message":"Enter correct Password. Forgot?"},status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response({"message": "This username is not registered yet"}, status=status.HTTP_400_BAD_REQUEST)

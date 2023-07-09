@@ -59,31 +59,39 @@ export default function LoginComponent() {
   return tokenAvailable ? (
     ""
   ) : (
-    <form onSubmit={formSubmitHandler}>
-      <label>
-        <p>Email</p>
-        <input
-          type="email"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </label>
+    <>
+      <form onSubmit={formSubmitHandler}>
+        <label>
+          <p>Email</p>
+          <input
+            type="email"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </label>
 
-      <label>
-        <p>Password</p>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </label>
-      {error && <p className="error-message">{error}</p>}
+        <label>
+          <p>Password</p>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </label>
+        {error && <p className="error-message">{error}</p>}
 
-      <div>
-        <button type="submit" disabled={isButtonDisabled}>
-          Submit
-        </button>
-      </div>
-    </form>
+        <div>
+          <button type="submit" disabled={isButtonDisabled}>
+            Login
+          </button>
+        </div>
+      </form>
+      <p>
+        Dont Have an acccount?{" "}
+        <a href="/signup" style={{ color: "Green", textDecoration: "None" }}>
+          Signup
+        </a>
+      </p>
+    </>
   );
 }
