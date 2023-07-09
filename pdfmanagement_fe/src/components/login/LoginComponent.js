@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import "./LoginComponent.css";
 import axios from "axios";
 import { redirect, useNavigate } from "react-router-dom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { loginStateAtom } from "../../context/loginState";
 
 const getToken = async (credentials) => {
   const token = await axios.post(
@@ -20,20 +22,20 @@ const getToken = async (credentials) => {
 export default function LoginComponent() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [tokenAvailable, setTokenAvailable] = useState(
-    sessionStorage.getItem("token") || false
-  );
+  const [tokenAvailable, setTokenAvailable] = useState();
   const navigate = useNavigate();
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [error, setError] = useState("");
 
+  const [isLoggedIn, setIsLoggedIn] = useRecoilState(loginStateAtom);
+
   // console.log(tokenAvailable);
 
-  useEffect(() => {
-    if (tokenAvailable) {
-      navigate("/dashboard");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (tokenAvailable) {
+  //     navigate("/dashboard");
+  //   }
+  // }, []);
 
   useEffect(() => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -49,7 +51,9 @@ export default function LoginComponent() {
 
     try {
       const token = await getToken({ username: username, password: password });
-      sessionStorage.setItem("token", token.access);
+      // sessionStorage.setItem("token", token.access);
+
+      setIsLoggedIn({ isLoggedIn: true, token: token.access });
       navigate("/dashboard");
     } catch (error) {
       setError("Invalid username or password");

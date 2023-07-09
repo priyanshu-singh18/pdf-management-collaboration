@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import PdfPreview from "../pdfpreview/PdfPreview";
 import "./Dashboards.css";
-import { Route, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ListItem from "./ListItem";
-import PdfViewPage from "./PdfViewPage";
-import { useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { filedatastate } from "../../context/filedataState";
+import { loginStateAtom } from "../../context/loginState";
 
 function parseJwt(token) {
   var base64Url = token.split(".")[1];
@@ -35,11 +34,11 @@ export default function Dashboard() {
   const [formdata, setFormdata] = useState();
 
   const navigate = useNavigate();
-  const token = sessionStorage.getItem("token");
-
+  const { isLoggedIn, token } = useRecoilValue(loginStateAtom);
+  console.log(token);
   useEffect(() => {
     (async () => {
-      if (!token) {
+      if (!isLoggedIn) {
         navigate("/");
         return;
       }
@@ -78,9 +77,9 @@ export default function Dashboard() {
   }, []);
 
   const handleItemClick = (val) => {
-    const temp = userdata?.filter((item) => item.file_id == val);
+    const temp = userdata?.filter((item) => item.file_id === val);
     // console.log(temp[0]);
-    setFileData({file_id: temp[0].file_id , file_data :temp[0].uploaded_file});
+    setFileData({ file_id: temp[0].file_id, file_data: temp[0].uploaded_file });
     navigate("/pdfview");
   };
 
@@ -110,26 +109,19 @@ export default function Dashboard() {
   // console.log(userdata);
   // console.log(shareddata);
 
-  const handleLogout = () => {
-    sessionStorage.clear();
-    navigate("/");
-  };
-
   const files1 =
     userdata.length > 0 ? (
       userdata?.map((item, index) => {
         return (
-          
-            <ListItem
+          <ListItem
             key={item.file_id}
-              serial={index + 1}
-              name={`File ${index + 1}`}
-              uploaded_by={item.uploaded_by_email}
-              uploaded_at={item.uploaded_at}
-              clickedItem={handleItemClick}
-              file_id={item.file_id}
-            />
-
+            serial={index + 1}
+            name={`File ${index + 1}`}
+            uploaded_by={item.uploaded_by_email}
+            uploaded_at={item.uploaded_at}
+            clickedItem={handleItemClick}
+            file_id={item.file_id}
+          />
         );
       })
     ) : (
@@ -164,9 +156,7 @@ export default function Dashboard() {
           onChange={(e) => setShareWithEmail(e.target.value)}
         />
         <input type="file" onChange={handleFileUpload} />
-        <button onClick={handleLogout} className="logout-button">
-          Logout
-        </button>
+
         <button onClick={handleUploadButton} className="logout-button">
           Upload
         </button>
