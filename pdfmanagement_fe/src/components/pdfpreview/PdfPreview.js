@@ -9,16 +9,18 @@ import "./PdfPreview.css";
 export default function PdfPreview() {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
-  const file_data = useRecoilState(filedatastate);
+  const temp_data = useRecoilState(filedatastate);
   const navigate = useNavigate();
 
-  if (file_data === "") {
+  // console.log(temp_data);
+
+  if (temp_data[0].file_data === "") {
     navigate("/dashboard");
     return;
   }
   //   console.log(atob(props.file_data));
   pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
-  const linkSource = `data:application/pdf;base64,${file_data}`;
+  const linkSource = `data:application/pdf;base64,${temp_data[0].file_data}`;
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);

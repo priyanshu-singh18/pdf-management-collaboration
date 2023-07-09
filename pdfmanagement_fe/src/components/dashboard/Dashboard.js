@@ -28,6 +28,8 @@ export default function Dashboard() {
   const [userdata, setUserdata] = useState([]);
   const [shareddata, setShareddata] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [shareWithEmail, setShareWithEmail] = useState("");
+
   const setFileData = useSetRecoilState(filedatastate);
 
   const [formdata, setFormdata] = useState();
@@ -77,8 +79,8 @@ export default function Dashboard() {
 
   const handleItemClick = (val) => {
     const temp = userdata?.filter((item) => item.file_id == val);
-    console.log(temp[0]);
-    setFileData(temp[0].uploaded_file);
+    // console.log(temp[0]);
+    setFileData({file_id: temp[0].file_id , file_data :temp[0].uploaded_file});
     navigate("/pdfview");
   };
 
@@ -117,15 +119,17 @@ export default function Dashboard() {
     userdata.length > 0 ? (
       userdata?.map((item, index) => {
         return (
-          <ListItem
+          
+            <ListItem
             key={item.file_id}
-            serial={index + 1}
-            name={`File ${index + 1}`}
-            uploaded_by={item.uploaded_by_email}
-            uploaded_at={item.uploaded_at}
-            clickedItem={handleItemClick}
-            file_id={item.file_id}
-          />
+              serial={index + 1}
+              name={`File ${index + 1}`}
+              uploaded_by={item.uploaded_by_email}
+              uploaded_at={item.uploaded_at}
+              clickedItem={handleItemClick}
+              file_id={item.file_id}
+            />
+
         );
       })
     ) : (
@@ -153,6 +157,12 @@ export default function Dashboard() {
   return (
     <>
       <div className="container">
+        <input
+          type="email"
+          placeholder="Enter recipient email"
+          value={shareWithEmail}
+          onChange={(e) => setShareWithEmail(e.target.value)}
+        />
         <input type="file" onChange={handleFileUpload} />
         <button onClick={handleLogout} className="logout-button">
           Logout

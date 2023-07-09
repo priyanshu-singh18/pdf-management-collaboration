@@ -2,5 +2,9 @@ import { atom } from "recoil";
 
 export const filedatastate = atom({
   key: "filedata",
-  default: "",
+  default: {
+    file_id: "",
+    file_data: "",
+  },
+  dangerouslyAllowMutability: true,
 });
