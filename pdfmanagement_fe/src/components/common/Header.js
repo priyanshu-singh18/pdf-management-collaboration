@@ -79,7 +79,7 @@ export default function Header() {
           <button onClick={toggleModal}>Upload File</button>
         )}
         {location.pathname === "/pdfview" && (
-          <button onClick={toggleModal}>Share</button>
+          <button onClick={toggleModal}>Share File</button>
         )}
         {token && <LogoutButton logout={logoutHandler} />}
       </div>

@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FileUploadParser, FormParser
-from uploads.models import Upload
+from uploads.models import Upload,Comments
 from users.models import UserModel
 from django.core import serializers
 from django.http import HttpResponse
@@ -15,9 +15,9 @@ import json
 @permission_classes([IsAuthenticated])
 def upload_file(request, **kwargs):
     parser_classes = [MultiPartParser, FileUploadParser, FormParser]
-    print(request.FILES)
+    # print(request.FILES)
     file = request.FILES['file']
-    print(file.content_type)
+    # print(file.content_type)
     file= file.read()
     # print(type(file))
     
@@ -96,3 +96,53 @@ def share_file(request, **kwargss):
 
     
     return Response("Share Working")
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def post_comment(request,**kwargs):
+    # print(request.data)
+    user_email = request.user.username
+    # print(user_email)
+    file_id = request.data.get('file_id')
+    parent_id = request.data.get('parent_id', None)
+    content = request.data.get('content')
+    user = UserModel.objects.get(username = user_email)
+    file = Upload.objects.get(file_id=file_id)
+    comment = Comments(author=user,content=content,author_email = user_email,post=file)
+    if parent_id is not None:
+        comment.parent_id_id = parent_id
+    comment.save()
+
+    return Response("Comment Saved")
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def fetch_comments(request,**kwargs):
+    file_id= request.GET.get('file_id', '')
+    print(file_id)
+    comments = Comments.objects.filter(parent_id=None, post = file_id) 
+
+    comment_list = []
+    for comment in comments:
+        comment_data = {
+            'comment_id': comment.comment_id,
+            'content': comment.content,
+            'author': comment.author.username,
+            'timestamp': comment.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+            'replies': []
+        }
+
+        replies = Comments.objects.filter(parent_id=comment.comment_id) 
+        for reply in replies:
+            reply_data = {
+                'comment_id': reply.comment_id,
+                'content': reply.content,
+                'author': reply.author.username,
+                'timestamp': reply.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+            }
+            comment_data['replies'].append(reply_data)
+
+        comment_list.append(comment_data)
+
+    return Response({'comments': comment_list})

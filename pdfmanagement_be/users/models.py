@@ -9,7 +9,7 @@ class UserModel(AbstractUser):
     username = models.EmailField(
  null=False, default="DUMMY_EMAIL",unique=True,blank=False)
     password = models.CharField(max_length=256, blank=True)
-    access_shared_ids = ArrayField(models.IntegerField(blank=True,null=True),size=20,null=True)
+    access_shared_ids = ArrayField(models.IntegerField(blank=True,null=True),size=100,null=True)
 
     USERNAME_FIELD = 'username'
     PASSWORD_FIELD = 'password'
