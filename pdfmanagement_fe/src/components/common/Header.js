@@ -85,24 +85,28 @@ export default function Header() {
       </div>
       {isModalVisible && location.pathname === "/dashboard" && (
         <Modal onCloseClick={toggleModal}>
-          <div className="modal-content">
+          <div className={classes["modal-content"]}>
             <input type="file" onChange={handleFileUpload} />
-            <button onClick={handleUploadButton}>Upload</button>
-            <button onClick={toggleModal}>Cancel</button>
+            <div className={classes["modal-controllers"]}>
+              <button onClick={handleUploadButton}>Upload</button>
+              <button onClick={toggleModal}>Cancel</button>
+            </div>
           </div>
         </Modal>
       )}
       {isModalVisible && location.pathname === "/pdfview" && (
         <Modal onCloseClick={toggleModal}>
-          <div className="modal-content">
+          <div className={classes["modal-content"]}>
             <input
               type="email"
               placeholder="Enter recipient email"
               value={shareWithEmail}
               onChange={(e) => setShareWithEmail(e.target.value)}
             />
-            <button onClick={handleShareButton}>Share</button>
-            <button onClick={toggleModal}>Cancel</button>
+            <div className={classes["modal-controllers"]}>
+              <button onClick={handleShareButton}>Share</button>
+              <button onClick={toggleModal}>Cancel</button>
+            </div>
           </div>
         </Modal>
       )}
