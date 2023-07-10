@@ -19,7 +19,7 @@ const getToken = async (credentials) => {
 
 export default function SignupComponent() {
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState();
+  const [password, setPassword] = useState("");
   const [cnfpassword, setCnfpassword] = useState();
   const [fullname, setFullname] = useState("");
   const [error, setError] = useState();
@@ -36,7 +36,7 @@ export default function SignupComponent() {
       setError("Enter Full Name Please");
       return;
     }
-    if (username === "" && isValidEmail) {
+    if (username === "" && !isValidEmail) {
       setError("Enter Email Please");
       return;
     }
@@ -62,7 +62,7 @@ export default function SignupComponent() {
   };
 
   return (
-    <form onSubmit={formSubmitHandler}>
+    <form onSubmit={formSubmitHandler} className="signup-form">
       <label>
         <p>Full Name</p>
         <input

@@ -27,18 +27,16 @@ export default function Dashboard() {
   const [userdata, setUserdata] = useState([]);
   const [shareddata, setShareddata] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [shareWithEmail, setShareWithEmail] = useState("");
 
   const setFileData = useSetRecoilState(filedatastate);
 
-  const [formdata, setFormdata] = useState();
-
   const navigate = useNavigate();
-  const { isLoggedIn, token } = useRecoilValue(loginStateAtom);
-  console.log(token);
+  // const { isLoggedIn, token } = useRecoilValue(loginStateAtom);
+  const token = sessionStorage.getItem("token");
+  // console.log(token);
   useEffect(() => {
     (async () => {
-      if (!isLoggedIn) {
+      if (!token) {
         navigate("/");
         return;
       }
@@ -74,38 +72,21 @@ export default function Dashboard() {
       // console.log({ shared_files: shared_files.data });
       setIsLoading(false);
     })();
-  }, []);
+  }, [isLoading]);
 
-  const handleItemClick = (val) => {
+  const handleItemClickUser = (val) => {
     const temp = userdata?.filter((item) => item.file_id === val);
-    // console.log(temp[0]);
+    console.log(temp[0]);
     setFileData({ file_id: temp[0].file_id, file_data: temp[0].uploaded_file });
     navigate("/pdfview");
   };
 
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-
-    const formData = new FormData();
-    formData.append("file", file);
-    setFormdata(formData);
+  const handleItemClickShared = (val) => {
+    const temp = shareddata?.filter((item) => item.file_id === val);
+    // console.log(temp[0]);
+    setFileData({ file_id: temp[0].file_id, file_data: temp[0].uploaded_file });
+    navigate("/pdfview");
   };
-
-  const handleUploadButton = async () => {
-    const resp = await axios.post(
-      "http://127.0.0.1:8000/uploads/upload",
-      formdata,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    // console.log(resp);
-    window.location.reload(false);
-  };
-
   // console.log(userdata);
   // console.log(shareddata);
 
@@ -119,7 +100,7 @@ export default function Dashboard() {
             name={`File ${index + 1}`}
             uploaded_by={item.uploaded_by_email}
             uploaded_at={item.uploaded_at}
-            clickedItem={handleItemClick}
+            clickedItem={handleItemClickUser}
             file_id={item.file_id}
           />
         );
@@ -138,7 +119,7 @@ export default function Dashboard() {
             uploaded_by={item.uploaded_by_email}
             uploaded_at={item.uploaded_at}
             file_id={item.file_id}
-            clickedItem={handleItemClick}
+            clickedItem={handleItemClickShared}
           />
         );
       })
@@ -149,26 +130,17 @@ export default function Dashboard() {
   return (
     <>
       <div className="container">
-        <input
-          type="email"
-          placeholder="Enter recipient email"
-          value={shareWithEmail}
-          onChange={(e) => setShareWithEmail(e.target.value)}
-        />
-        <input type="file" onChange={handleFileUpload} />
-
-        <button onClick={handleUploadButton} className="logout-button">
-          Upload
-        </button>
-        <div className="files-container">
-          <h1>Your Files</h1>
-          <ul className="file-list">{files1}</ul>
+        <h1 className="heading">Your Dashboard</h1>
+        <div className="files-container-1">
+          <div className="files-container-2">
+            <h1>Your Files</h1>
+            <ul className="file-list">{files1}</ul>
+          </div>
+          <div className="files-container-2">
+            <h1>Shared Files</h1>
+            <ul className="file-list">{files2}</ul>
+          </div>
         </div>
-        <div className="files-container">
-          <h1>Shared Files</h1>
-          <ul className="file-list">{files2}</ul>
-        </div>
-        {/* {isView && <PdfPreview file_data={userdata[2]?.uploaded_file} />} */}
       </div>
     </>
   );

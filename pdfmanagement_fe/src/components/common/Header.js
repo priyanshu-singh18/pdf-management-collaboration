@@ -1,24 +1,111 @@
-import React from "react";
+import React, { useState } from "react";
 import classes from "./Header.module.css";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { loginStateAtom } from "../../context/loginState";
 import LogoutButton from "./LogoutButton";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Modal from "./Modal";
+import { filedatastate } from "../../context/filedataState";
 
 export default function Header() {
-  const [login, setLogin] = useRecoilState(loginStateAtom);
+  // const [login, setLogin] = useRecoilState(loginStateAtom);
   const navigate = useNavigate();
-  console.log(login.isLoggedIn);
-
+  const [shareWithEmail, setShareWithEmail] = useState("");
+  const location = useLocation();
+  const { file_id } = useRecoilValue(filedatastate);
+  const [formdata, setFormdata] = useState();
+  // console.log(login.isLoggedIn);
+  const token = sessionStorage.getItem("token");
   const logoutHandler = (val) => {
-    setLogin({ isLoggedIn: false, token: "" });
+    // setLogin({ isLoggedIn: false, token: "" });
+    sessionStorage.clear();
     navigate("/");
+  };
+  const [isModalVisible, setIsModalVisible] = useState();
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+
+    const formData = new FormData();
+    formData.append("file", file);
+    setFormdata(formData);
+  };
+
+  const handleUploadButton = async () => {
+    const resp = await axios.post(
+      "http://127.0.0.1:8000/uploads/upload",
+      formdata,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log(resp);
+    // setIsLoading(true);
+    window.location.reload(false);
+  };
+
+  // const handleFileShare = () => {};
+  const handleShareButton = async () => {
+    console.log(shareWithEmail);
+    const data = { share_to: shareWithEmail, file_id: file_id };
+    const resp = await axios.post(
+      "http://127.0.0.1:8000/uploads/share",
+      JSON.stringify(data),
+      {
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log(resp);
+    // setIsLoading(true);
+    // window.location.reload(false);
+  };
+
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
   };
 
   return (
     <header className={classes.header}>
       <h1>PDF Management and Collaboration</h1>
-      {login.isLoggedIn && <LogoutButton logout={logoutHandler} />}
+      <div className={classes.controller}>
+        {location.pathname === "/dashboard" && (
+          <button onClick={toggleModal}>Upload File</button>
+        )}
+        {location.pathname === "/pdfview" && (
+          <button onClick={toggleModal}>Share</button>
+        )}
+        {token && <LogoutButton logout={logoutHandler} />}
+      </div>
+      {isModalVisible && location.pathname === "/dashboard" && (
+        <Modal onCloseClick={toggleModal}>
+          <div className="modal-content">
+            <input type="file" onChange={handleFileUpload} />
+            <button onClick={handleUploadButton}>Upload</button>
+            <button onClick={toggleModal}>Cancel</button>
+          </div>
+        </Modal>
+      )}
+      {isModalVisible && location.pathname === "/pdfview" && (
+        <Modal onCloseClick={toggleModal}>
+          <div className="modal-content">
+            <input
+              type="email"
+              placeholder="Enter recipient email"
+              value={shareWithEmail}
+              onChange={(e) => setShareWithEmail(e.target.value)}
+            />
+            <button onClick={handleShareButton}>Share</button>
+            <button onClick={toggleModal}>Cancel</button>
+          </div>
+        </Modal>
+      )}
     </header>
   );
 }

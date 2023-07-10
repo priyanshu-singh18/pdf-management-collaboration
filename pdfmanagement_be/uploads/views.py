@@ -82,7 +82,7 @@ def shared_files(request, **kwargss):
 def share_file(request, **kwargss):
     user_email = request.user.username
     
-    
+    print(request.data)
     share_to = request.data['share_to']
     file_id = request.data['file_id']
     user = UserModel.objects.get(username = share_to)

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
@@ -10,11 +10,20 @@ import Header from "./components/common/Header";
 import PdfViewPage from "./pages/PdfViewPage";
 
 function App() {
+  // const [modalIsOpen, setModalIsOpen] = useState(false);
+
+  // const modalOpenHandler = () => {
+  //   setModalIsOpen(true);
+  // };
+  // const modalCloseHandler = () => {
+  //   setModalIsOpen(false);
+  // };
+
   return (
     <RecoilRoot>
       <Router>
         <div className="App">
-          <Header />
+          <Header  />
           <Routes>
             <Route exact path="/" element={<LoginPage />} />
             <Route exact path="/dashboard" element={<DashboardPage />} />
