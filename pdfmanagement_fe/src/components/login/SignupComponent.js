@@ -62,57 +62,60 @@ export default function SignupComponent() {
   };
 
   return (
-    <form onSubmit={formSubmitHandler} className="signup-form">
-      <label>
-        <p>Full Name</p>
-        <input
-          type="text"
-          value={fullname}
-          onChange={(e) => {
-            setFullname(e.target.value);
-            setError("");
-          }}
-        />
-      </label>
-      <label>
-        <p>Email</p>
-        <input
-          type="email"
-          value={username}
-          onChange={(e) => {
-            setUsername(e.target.value);
-            setError("");
-          }}
-        />
-      </label>
+    <>
+      <form onSubmit={formSubmitHandler} className="signup-form">
+        <h1>Signup</h1>
+        <label>
+          <p>Full Name</p>
+          <input
+            type="text"
+            value={fullname}
+            onChange={(e) => {
+              setFullname(e.target.value);
+              setError("");
+            }}
+          />
+        </label>
+        <label>
+          <p>Email</p>
+          <input
+            type="email"
+            value={username}
+            onChange={(e) => {
+              setUsername(e.target.value);
+              setError("");
+            }}
+          />
+        </label>
 
-      <label>
-        <p>Password</p>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => {
-            setPassword(e.target.value);
-            setError("");
-          }}
-        />
-      </label>
-      <label>
-        <p>Confirm Password</p>
-        <input
-          type="password"
-          value={cnfpassword}
-          onChange={(e) => {
-            setCnfpassword(e.target.value);
-            setError("");
-          }}
-        />
-      </label>
-      {error && <p className="error-message">{error}</p>}
+        <label>
+          <p>Password</p>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setError("");
+            }}
+          />
+        </label>
+        <label>
+          <p>Confirm Password</p>
+          <input
+            type="password"
+            value={cnfpassword}
+            onChange={(e) => {
+              setCnfpassword(e.target.value);
+              setError("");
+            }}
+          />
+        </label>
+        {error && <p className="error-message">{error}</p>}
 
-      <div>
-        <button type="submit">Signup</button>
-      </div>
-    </form>
+        <div>
+          <button type="submit">Signup</button>
+        </div>
+      </form>
+    </>
   );
 }

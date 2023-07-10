@@ -4,6 +4,13 @@
   align-items: center;
   margin-top: 50px;
 }
+.login-container {
+  border: 1px solid #ced4da;
+  width: 450px;
+  margin-left: 40%;
+  padding-bottom: 40px;
+  border-radius: 24px;
+}
 
 .login label {
   display: flex;

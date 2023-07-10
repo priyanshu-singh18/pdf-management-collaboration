@@ -4,6 +4,19 @@ import { filedatastate } from "../../context/filedataState";
 import axios from "axios";
 import "./CommentList.css";
 
+const post_comment = async (data, token) => {
+  return await axios.post(
+    "http://127.0.0.1:8000/uploads/comment",
+    JSON.stringify(data),
+    {
+      headers: {
+        "content-type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+};
+
 const Comment = ({ comment, onUpdate }) => {
   const [showReplies, setShowReplies] = useState(false);
   const [replyContent, setReplyContent] = useState("");
@@ -28,19 +41,10 @@ const Comment = ({ comment, onUpdate }) => {
       file_id: file_id,
     };
 
-    const resp = await axios.post(
-      "http://127.0.0.1:8000/uploads/comment",
-      JSON.stringify(newReply),
-      {
-        headers: {
-          "content-type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    console.log(resp);
+    const resp = await post_comment(newReply, token);
+    // console.log(resp);
     setReplyContent("");
-    onUpdate(true);
+    onUpdate();
   };
 
   const renderReplies = comment.replies.map((reply) => (
@@ -53,16 +57,18 @@ const Comment = ({ comment, onUpdate }) => {
 
   return (
     <div className="comment">
-      <p className="comment-content">{comment.content}</p>
-      <p>By: {comment.author}</p>
-      <p>{comment.timestamp}</p>
+      <div className="parent-comment">
+        <p className="comment-content">{comment.content}</p>
+        <p>By: {comment.author}</p>
+        <p>{comment.timestamp}</p>
+      </div>
       {comment.replies.length > 0 && (
         <button onClick={toggleReplies}>
           {showReplies ? "Hide Replies" : "Show Replies"}
         </button>
       )}
       {showReplies && <div className="replies">{renderReplies}</div>}
-      <form onSubmit={handleReplySubmit}>
+      <form onSubmit={handleReplySubmit} className="reply-form">
         <input
           type="text"
           placeholder="Reply..."
@@ -79,6 +85,7 @@ const CommentList = () => {
   const { file_id } = useRecoilValue(filedatastate);
   const [comments, setComments] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [mainContent, setMainContent] = useState();
   const [flag, setFlag] = useState(false);
 
   //   console.log(file_id);
@@ -114,9 +121,29 @@ const CommentList = () => {
     setFlag(!flag);
   };
 
+  const addCommentHandler = async () => {
+    const new_comment = {
+      content: mainContent,
+      file_id: file_id,
+    };
+    const resp = await post_comment(new_comment, token);
+    setMainContent("");
+    updateHandler();
+  };
   return (
-    <div>
+    <div className="comment-container">
       <h1>Comments</h1>
+      <div className="add-comment">
+        <input
+          type="text"
+          placeholder="Enter New Comment"
+          value={mainContent}
+          onChange={(event) => {
+            setMainContent(event.target.value);
+          }}
+        />
+        <button onClick={addCommentHandler}>Add</button>
+      </div>
       {comments.map((comment) => (
         <Comment
           key={comment.comment_id}

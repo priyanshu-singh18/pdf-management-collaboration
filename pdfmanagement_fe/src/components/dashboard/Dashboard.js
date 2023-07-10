@@ -106,7 +106,7 @@ export default function Dashboard() {
         );
       })
     ) : (
-      <p>Upload Files First</p>
+      <p style={{ width: "450px", fontSize: "20px" }}>Upload Files First</p>
     );
   const files2 =
     shareddata.length > 0 ? (
@@ -124,7 +124,9 @@ export default function Dashboard() {
         );
       })
     ) : (
-      <p style={{ width: "450px" }}>You Dont have Shared Files</p>
+      <p style={{ width: "450px", fontSize: "20px" }}>
+        You Dont have Shared Files
+      </p>
     );
 
   return (

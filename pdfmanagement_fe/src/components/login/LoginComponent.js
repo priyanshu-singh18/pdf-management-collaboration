@@ -65,7 +65,8 @@ export default function LoginComponent() {
   return tokenAvailable ? (
     ""
   ) : (
-    <>
+    <div className="login-container">
+      <h1>Login</h1>
       <form onSubmit={formSubmitHandler} className="login">
         <label>
           <p>Email</p>
@@ -94,10 +95,10 @@ export default function LoginComponent() {
       </form>
       <p>
         Dont Have an acccount?{" "}
-        <a href="/signup" style={{ color: "#21307a", textDecoration: "None" }}>
+        <a href="/signup" style={{ color: "#ab5240", textDecoration: "None" }}>
           Signup
         </a>
       </p>
-    </>
+    </div>
   );
 }
