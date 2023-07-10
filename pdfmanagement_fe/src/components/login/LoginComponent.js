@@ -66,7 +66,7 @@ export default function LoginComponent() {
     ""
   ) : (
     <>
-      <form onSubmit={formSubmitHandler}>
+      <form onSubmit={formSubmitHandler} className="login">
         <label>
           <p>Email</p>
           <input

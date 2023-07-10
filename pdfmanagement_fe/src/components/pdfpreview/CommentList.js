@@ -1,0 +1,131 @@
+import React, { useState, useEffect } from "react";
+import { useRecoilValue } from "recoil";
+import { filedatastate } from "../../context/filedataState";
+import axios from "axios";
+import "./CommentList.css";
+
+const Comment = ({ comment, onUpdate }) => {
+  const [showReplies, setShowReplies] = useState(false);
+  const [replyContent, setReplyContent] = useState("");
+
+  const token = sessionStorage.getItem("token");
+  const { file_id } = useRecoilValue(filedatastate);
+  const toggleReplies = () => {
+    setShowReplies(!showReplies);
+  };
+
+  const handleReplyChange = (event) => {
+    setReplyContent(event.target.value);
+  };
+
+  const handleReplySubmit = async (event) => {
+    event.preventDefault();
+    // Send API request to add the reply with replyContent
+    // Update the comment object with the new reply
+    const newReply = {
+      content: replyContent,
+      parent_id: comment.comment_id,
+      file_id: file_id,
+    };
+
+    const resp = await axios.post(
+      "http://127.0.0.1:8000/uploads/comment",
+      JSON.stringify(newReply),
+      {
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log(resp);
+    setReplyContent("");
+    onUpdate(true);
+  };
+
+  const renderReplies = comment.replies.map((reply) => (
+    <div key={reply.comment_id} className="reply">
+      <p className="comment-content">{reply.content}</p>
+      <p>By: {reply.author}</p>
+      <p>{reply.timestamp}</p>
+    </div>
+  ));
+
+  return (
+    <div className="comment">
+      <p className="comment-content">{comment.content}</p>
+      <p>By: {comment.author}</p>
+      <p>{comment.timestamp}</p>
+      {comment.replies.length > 0 && (
+        <button onClick={toggleReplies}>
+          {showReplies ? "Hide Replies" : "Show Replies"}
+        </button>
+      )}
+      {showReplies && <div className="replies">{renderReplies}</div>}
+      <form onSubmit={handleReplySubmit}>
+        <input
+          type="text"
+          placeholder="Reply..."
+          value={replyContent}
+          onChange={handleReplyChange}
+        />
+        <button type="submit">Add Reply</button>
+      </form>
+    </div>
+  );
+};
+
+const CommentList = () => {
+  const { file_id } = useRecoilValue(filedatastate);
+  const [comments, setComments] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [flag, setFlag] = useState(false);
+
+  //   console.log(file_id);
+  const token = sessionStorage.getItem("token");
+
+  useEffect(() => {
+    const get_comments = async () => {
+      const data = await axios.get(
+        `http://127.0.0.1:8000/uploads/comments?file_id=${file_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return data.data.comments;
+    };
+    const fetchComments = async () => {
+      try {
+        const data = await get_comments();
+        setComments(data);
+        // console.log(comments);
+      } catch (error) {
+        // Handle error (e.g., display an error message)
+        console.error(error);
+      }
+    };
+
+    fetchComments();
+  }, [file_id, flag]);
+
+  const updateHandler = () => {
+    setFlag(!flag);
+  };
+
+  return (
+    <div>
+      <h1>Comments</h1>
+      {comments.map((comment) => (
+        <Comment
+          key={comment.comment_id}
+          comment={comment}
+          onUpdate={updateHandler}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default CommentList;

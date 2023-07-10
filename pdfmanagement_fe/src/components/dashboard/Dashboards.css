@@ -47,14 +47,14 @@
 
 .file-list li {
   padding: 10px;
-  background-color: #f5f5f5;
+  background-color: #dee2e6;
   border-radius: 5px;
   margin-bottom: 10px;
   cursor: pointer;
 }
 
 .file-list li:hover {
-  background-color: #e0e0e0;
+  background-color: #ced4da;
 }
 
 .file-list li span {

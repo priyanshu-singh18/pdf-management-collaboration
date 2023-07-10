@@ -6,6 +6,13 @@
 
 .page-container {
   margin-top: 100px;
+  /* display: flex;
+  flex-direction: row; */
+}
+.pdf-page {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .App-logo {

@@ -124,7 +124,7 @@ export default function Dashboard() {
         );
       })
     ) : (
-      <p>You Dont have Shared Files</p>
+      <p style={{ width: "450px" }}>You Dont have Shared Files</p>
     );
 
   return (
