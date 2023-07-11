@@ -27,13 +27,13 @@ export default function Dashboard() {
   const [userdata, setUserdata] = useState([]);
   const [shareddata, setShareddata] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null); // New state for error handling
 
   const setFileData = useSetRecoilState(filedatastate);
 
   const navigate = useNavigate();
-  // const { isLoggedIn, token } = useRecoilValue(loginStateAtom);
   const token = sessionStorage.getItem("token");
-  // console.log(token);
+
   useEffect(() => {
     (async () => {
       if (!token) {
@@ -47,30 +47,33 @@ export default function Dashboard() {
       } else {
         console.log(true);
       }
-      // console.log(exp);
 
-      const user_files = await axios.get(
-        "http://127.0.0.1:8000/uploads/fetch",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      try {
+        const userFilesResponse = await axios.get(
+          "http://127.0.0.1:8000/uploads/fetch",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setUserdata(userFilesResponse.data);
 
-      const shared_files = await axios.get(
-        "http://127.0.0.1:8000/uploads/shared",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setUserdata(user_files.data);
-      setShareddata(shared_files.data);
-      // console.log({ user_files: user_files.data });
-      // console.log({ shared_files: shared_files.data });
-      setIsLoading(false);
+        const sharedFilesResponse = await axios.get(
+          "http://127.0.0.1:8000/uploads/shared",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setShareddata(sharedFilesResponse.data);
+
+        setIsLoading(false);
+      } catch (error) {
+        setError("An error occurred while fetching data."); // Set the error state
+        setIsLoading(false);
+      }
     })();
   }, [isLoading]);
 
@@ -128,6 +131,10 @@ export default function Dashboard() {
         You Dont have Shared Files
       </p>
     );
+
+  if (error) {
+    return <div>Error: {error}</div>; // Render an error message
+  }
 
   return (
     <>

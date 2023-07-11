@@ -23,48 +23,58 @@ export default function Header() {
     navigate("/");
   };
   const [isModalVisible, setIsModalVisible] = useState();
+  const [error, setError] = useState(null); // Add error state
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
-
     const formData = new FormData();
     formData.append("file", file);
     setFormdata(formData);
   };
 
   const handleUploadButton = async () => {
-    const resp = await axios.post(
-      "http://127.0.0.1:8000/uploads/upload",
-      formdata,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    console.log(resp);
-    // setIsLoading(true);
-    window.location.reload(false);
+    try {
+      const resp = await axios.post(
+        "http://127.0.0.1:8000/uploads/upload",
+        formdata,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(resp);
+      // setIsLoading(true);
+      window.location.reload(false);
+    } catch (error) {
+      setError("Error uploading file. Please try again."); // Set error message
+    }
   };
 
-  // const handleFileShare = () => {};
   const handleShareButton = async () => {
     console.log(shareWithEmail);
     const data = { share_to: shareWithEmail, file_id: file_id };
-    const resp = await axios.post(
-      "http://127.0.0.1:8000/uploads/share",
-      JSON.stringify(data),
-      {
-        headers: {
-          "content-type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    console.log(resp);
-    // setIsLoading(true);
-    // window.location.reload(false);
+    try {
+      const share_file = async () => {
+        return await axios.post(
+          "http://127.0.0.1:8000/uploads/share",
+          JSON.stringify(data),
+          {
+            headers: {
+              "content-type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      };
+
+      const resp = await share_file();
+      setShareWithEmail("");
+      console.log(resp);
+    } catch (error) {
+      setError("Error sharing file. Please try again."); // Set error message
+    }
   };
 
   const toggleModal = () => {
@@ -110,6 +120,8 @@ export default function Header() {
           </div>
         </Modal>
       )}
+      {error && <div className={classes.error}>{error}</div>}{" "}
+      {/* Display error message */}
     </header>
   );
 }
