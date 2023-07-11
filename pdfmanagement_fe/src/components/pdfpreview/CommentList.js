@@ -5,16 +5,30 @@ import axios from "axios";
 import "./CommentList.css";
 
 const post_comment = async (data, token) => {
-  return await axios.post(
-    "http://127.0.0.1:8000/uploads/comment",
-    JSON.stringify(data),
-    {
-      headers: {
-        "content-type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+  try {
+    const response = await axios.post(
+      "http://127.0.0.1:8000/uploads/comment",
+      JSON.stringify(data),
+      {
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    if (error.response) {
+      // console.log(error.response);
+      const { status, data } = error.response;
+      console.error(`Error posting comment (${status}): ${data.error}`);
+    } else if (error.request) {
+      console.error("No response received from the server. Please try again.");
+    } else {
+      console.error("An error occurred while posting the comment. Please try again.");
     }
-  );
+  }
 };
 
 const Comment = ({ comment, onUpdate }) => {
@@ -110,7 +124,7 @@ const CommentList = () => {
         // console.log(comments);
       } catch (error) {
         // Handle error (e.g., display an error message)
-        console.error(error);
+        console.error(error.response.data.errror);
       }
     };
 

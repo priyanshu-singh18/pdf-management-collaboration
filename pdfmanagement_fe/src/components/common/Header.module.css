@@ -27,6 +27,7 @@
   display: flex;
   flex-direction: row;
   gap: 30px;
+  /* position: fixed; */
 }
 .modal-content {
   margin-top: 20px;
@@ -38,4 +39,10 @@
 .modal-controllers {
   display: flex;
   gap: 20px;
+}
+
+.error {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  color: red;
 }

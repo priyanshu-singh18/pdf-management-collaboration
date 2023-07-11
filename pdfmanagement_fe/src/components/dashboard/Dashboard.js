@@ -71,7 +71,15 @@ export default function Dashboard() {
 
         setIsLoading(false);
       } catch (error) {
-        setError("An error occurred while fetching data."); // Set the error state
+        if (error.response) {
+          // console.log(error.response);
+          const { status, data } = error.response;
+          setError(`Error sharing file (${status}): ${data.error}`);
+        } else if (error.request) {
+          setError("No response received from the server. Please try again.");
+        } else {
+          setError("An error occurred while sharing the file. Please try again.");
+        }
         setIsLoading(false);
       }
     })();

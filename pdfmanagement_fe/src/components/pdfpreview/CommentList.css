@@ -5,7 +5,7 @@
   padding-left: 30px;
   padding-right: 10px;
   /* margin-right: 40px; */
-  max-height: 850px;
+  height: 850px;
   overflow: scroll;
   background-color: #f1f3f5;
 }

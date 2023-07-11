@@ -40,6 +40,7 @@ export default function PdfPreview() {
           pageNumber={pageNumber}
           renderAnnotationLayer={false}
           renderTextLayer={false}
+    
         />
       </Document>
       <nav>

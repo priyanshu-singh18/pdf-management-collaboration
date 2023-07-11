@@ -7,6 +7,7 @@
   border-radius: 12px;
   padding-bottom: 0;
   /* max-height: 900px; */
+  width: auto;
 }
 
 .pdf-view-container nav {

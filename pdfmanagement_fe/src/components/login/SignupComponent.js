@@ -3,26 +3,38 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./SignupComponent.css";
 
-const getToken = async (credentials) => {
-  const token = await axios.post(
-    "http://localhost:8000/users/signup",
-    JSON.stringify(credentials),
-    {
-      headers: {
-        "content-type": "application/json",
-      },
-    }
-  );
-  console.log(token.data);
-  return token.data;
-};
-
 export default function SignupComponent() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [cnfpassword, setCnfpassword] = useState();
   const [fullname, setFullname] = useState("");
   const [error, setError] = useState();
+
+  const getToken = async (credentials) => {
+    try {
+      const token = await axios.post(
+        "http://localhost:8000/users/signup",
+        JSON.stringify(credentials),
+        {
+          headers: {
+            "content-type": "application/json",
+          },
+        }
+      );
+      // console.log(token.data);
+      return token.data;
+    } catch (error) {
+      if (error.response) {
+        // console.log(error.response);
+        const { status, data } = error.response;
+        setError(`Error signing up (${status}): ${data.error}`);
+      } else if (error.request) {
+        setError("No response received from the server. Please try again.");
+      } else {
+        setError("An error occurred while signing up. Please try again.");
+      }
+    }
+  };
 
   const navigate = useNavigate();
 
@@ -57,7 +69,7 @@ export default function SignupComponent() {
       sessionStorage.setItem("token", token.Token);
       navigate("/dashboard");
     } catch (error) {
-      setError("Invalid username or password");
+      console.error("Invalid username or password");
     }
   };
 

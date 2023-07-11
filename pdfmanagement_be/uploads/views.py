@@ -7,9 +7,6 @@ from users.models import UserModel
 import base64,json
 from django.core.exceptions import ObjectDoesNotExist,ValidationError
 from rest_framework import status
-
-
-
 import json
 
 @api_view(['POST'])
@@ -21,27 +18,26 @@ def upload_file(request, **kwargs):
         file = request.FILES['file']
 
         if file.content_type != 'application/pdf':
-            return Response("Invalid file type. Only PDF files are allowed.", status=400)
+            return Response({"error":"Invalid file type. Only PDF files are allowed."}, status=400)
         
         file = file.read()
         
         dummy_email = request.user
-        print({"email": dummy_email.username})
         
         try:
             user = UserModel.objects.get(username=dummy_email.username)
         except ObjectDoesNotExist:
-            return Response("User not found", status=404)
+            return Response({"error":"User not found"}, status=status.HTTP_404_NOT_FOUND)
         
         Upload.objects.create(uploaded_by_id=user, uploaded_file=file, uploaded_by_email=dummy_email.username)
         
-        return Response("Working upload")
+        return Response("Working upload" , status=status.HTTP_201_CREATED)
     
     except KeyError:
-        return Response("File not found in request", status=400)
+        return Response({"error":"File not found in request"}, status=400)
     
     except Exception as e:
-        return Response(str(e), status=500)
+        return Response({"error":str(e)}, status=500)
 
 
 @api_view(['GET'])
@@ -60,7 +56,7 @@ def fetch_file(request, **kwargs):
             x.__dict__['uploaded_file'] = data
             responseList.append(x.__dict__)
 
-        return Response(responseList)
+        return Response(responseList, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -71,7 +67,7 @@ def shared_files(request, **kwargss):
         user_email = request.user.username
         
         if not user_email:
-            return Response("Error in finding user",status=status.HTTP_404_NOT_FOUND)
+            return Response({"error" :"Error in finding user"},status=status.HTTP_404_NOT_FOUND)
         
         user = UserModel.objects.filter(username=user_email)
         
@@ -91,10 +87,10 @@ def shared_files(request, **kwargss):
             except ObjectDoesNotExist:
                 continue
     
-        return Response(response)
+        return Response(response ,status=status.HTTP_200_OK)
     
     except Exception as e:
-        return Response("An error occurred: " + str(e))
+        return Response({"error":"An error occurred: " + str(e)},status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -103,31 +99,31 @@ def share_file(request, **kwargss):
         share_to = request.data['share_to']
         file_id = request.data['file_id']
     except KeyError:
-        return Response("Missing 'share_to' or 'file_id' in request data", status=400)
+        return Response({"error":"Missing 'share_to' or 'file_id' in request data"}, status=400)
     
     file = Upload.objects.get(file_id=file_id)
     if file.uploaded_by_email== share_to:
-        return Response("The recipient is the owner of the file you are sharing")
+        return Response({"error":"The recipient is the owner of the file you are sharing"},status=status.HTTP_403_FORBIDDEN)
     
     try:
         user = UserModel.objects.get(username=share_to)
     except UserModel.DoesNotExist:
-        return Response("Error in finding user", status=404)
+        return Response({"error":"Error in finding user"}, status=404)
     
     if user.username == request.user.username:
-        return Response("You cannot share your own file", status=400)
+        return Response({"error":"You cannot share your own file"}, status=400)
     
     
     if len(user.access_shared_ids)>0:
         for x in user.access_shared_ids:
             if x == file_id:
-                return Response({"message" : "The recipient already has the access of the file you are Sharing"},status=status.HTTP_403_FORBIDDEN)
+                return Response({"error" : "The recipient already has the access of the file you are Sharing"},status=status.HTTP_403_FORBIDDEN)
 
     user.access_shared_ids.append(file_id)
     user.save()
     # print(user.access_shared_ids)
 
-    return Response("Share working")
+    return Response({"message":f"File with FileID:{file_id} shared."} ,status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
@@ -152,7 +148,7 @@ def post_comment(request,**kwargs):
         return Response("Comment Saved")
     
     except ObjectDoesNotExist:
-        return Response("User or File not found", status=404)
+        return Response({"error":"User or File not found"}, status=404)
     
     except Exception as e:
         return Response(str(e), status=500)
@@ -163,7 +159,7 @@ def fetch_comments(request,**kwargs):
     try:
         file_id = request.GET.get('file_id', '')
         if not file_id:
-            raise ValidationError('file_id parameter is missing')
+            raise ValidationError({"error":'file_id parameter is missing'},status=status.HTTP_400_BAD_REQUEST)
 
         comments = Comments.objects.filter(parent_id=None, post=file_id)
 

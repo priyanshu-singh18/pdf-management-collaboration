@@ -8,6 +8,10 @@ import { RecoilRoot } from "recoil";
 import SignupComponent from "./components/login/SignupComponent";
 import Header from "./components/common/Header";
 import PdfViewPage from "./pages/PdfViewPage";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
+
+// toast.configure();
 
 function App() {
   // const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -23,7 +27,7 @@ function App() {
     <RecoilRoot>
       <Router>
         <div className="App">
-          <Header  />
+          <Header />
           <Routes>
             <Route exact path="/" element={<LoginPage />} />
             <Route exact path="/dashboard" element={<DashboardPage />} />
@@ -31,6 +35,7 @@ function App() {
             <Route exact path="/signup" element={<SignupComponent />} />
           </Routes>
         </div>
+        <ToastContainer style={{ position: "fixed", zIndex: "1000" }} />
       </Router>
     </RecoilRoot>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import classes from "./Header.module.css";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { loginStateAtom } from "../../context/loginState";
@@ -7,23 +7,25 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Modal from "./Modal";
 import { filedatastate } from "../../context/filedataState";
+import { toast } from "react-toastify";
 
 export default function Header() {
-  // const [login, setLogin] = useRecoilState(loginStateAtom);
   const navigate = useNavigate();
   const [shareWithEmail, setShareWithEmail] = useState("");
   const location = useLocation();
   const { file_id } = useRecoilValue(filedatastate);
   const [formdata, setFormdata] = useState();
-  // console.log(login.isLoggedIn);
+  const [isLoading, setIsloading] = useState(false);
+
   const token = sessionStorage.getItem("token");
   const logoutHandler = (val) => {
-    // setLogin({ isLoggedIn: false, token: "" });
     sessionStorage.clear();
     navigate("/");
   };
   const [isModalVisible, setIsModalVisible] = useState();
   const [error, setError] = useState(null); // Add error state
+
+  useEffect(() => {}, [isLoading]);
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
@@ -34,26 +36,43 @@ export default function Header() {
 
   const handleUploadButton = async () => {
     try {
-      const resp = await axios.post(
-        "http://127.0.0.1:8000/uploads/upload",
-        formdata,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log(resp);
+      const upload_file = async () => {
+        return await axios.post(
+          "http://127.0.0.1:8000/uploads/upload",
+          formdata,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      };
+
+      // console.log(resp);
       // setIsLoading(true);
+      const resp = await upload_file();
+
       window.location.reload(false);
+      setFormdata("");
+      setIsloading(true);
     } catch (error) {
-      setError("Error uploading file. Please try again."); // Set error message
+      if (error.response) {
+        // console.log(error.response);
+        const { status, data } = error.response;
+        setError(`Error Uploading file (${status}): ${data.error}`);
+      } else if (error.request) {
+        setError("No response received from the server. Please try again.");
+      } else {
+        setError(
+          "An error occurred while uploading the file. Please try again."
+        );
+      }
     }
   };
 
   const handleShareButton = async () => {
-    console.log(shareWithEmail);
+    // console.log(shareWithEmail);
     const data = { share_to: shareWithEmail, file_id: file_id };
     try {
       const share_file = async () => {
@@ -70,15 +89,25 @@ export default function Header() {
       };
 
       const resp = await share_file();
+      toast.success("File Shared", { position: toast.POSITION.TOP_RIGHT });
       setShareWithEmail("");
-      console.log(resp);
+      // console.log(resp);
     } catch (error) {
-      setError("Error sharing file. Please try again."); // Set error message
+      if (error.response) {
+        // console.log(error.response);
+        const { status, data } = error.response;
+        setError(`Error sharing file (${status}): ${data.error}`);
+      } else if (error.request) {
+        setError("No response received from the server. Please try again.");
+      } else {
+        setError("An error occurred while sharing the file. Please try again.");
+      }
     }
   };
 
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
+    setError("");
   };
 
   return (
@@ -101,6 +130,7 @@ export default function Header() {
               <button onClick={handleUploadButton}>Upload</button>
               <button onClick={toggleModal}>Cancel</button>
             </div>
+            {error && <div className={classes.error}>{error}</div>}{" "}
           </div>
         </Modal>
       )}
@@ -117,11 +147,11 @@ export default function Header() {
               <button onClick={handleShareButton}>Share</button>
               <button onClick={toggleModal}>Cancel</button>
             </div>
+            {error && <div className={classes.error}>{error}</div>}{" "}
           </div>
         </Modal>
       )}
-      {error && <div className={classes.error}>{error}</div>}{" "}
-      {/* Display error message */}
+      {isLoading && <div></div>}
     </header>
   );
 }
