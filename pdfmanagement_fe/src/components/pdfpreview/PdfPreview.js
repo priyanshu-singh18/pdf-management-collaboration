@@ -18,6 +18,12 @@ export default function PdfPreview() {
     navigate("/dashboard");
     return;
   }
+
+  // const file_data = sessionStorage.getItem("file_data");
+  // if (!file_data) {
+  //   navigate("/dashboard");
+  //   return;
+  // }
   //   console.log(atob(props.file_data));
   pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
   const linkSource = `data:application/pdf;base64,${temp_data[0].file_data}`;
@@ -40,7 +46,6 @@ export default function PdfPreview() {
           pageNumber={pageNumber}
           renderAnnotationLayer={false}
           renderTextLayer={false}
-    
         />
       </Document>
       <nav>

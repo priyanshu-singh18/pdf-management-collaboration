@@ -78,7 +78,9 @@ export default function Dashboard() {
         } else if (error.request) {
           setError("No response received from the server. Please try again.");
         } else {
-          setError("An error occurred while sharing the file. Please try again.");
+          setError(
+            "An error occurred while sharing the file. Please try again."
+          );
         }
         setIsLoading(false);
       }
@@ -87,8 +89,10 @@ export default function Dashboard() {
 
   const handleItemClickUser = (val) => {
     const temp = userdata?.filter((item) => item.file_id === val);
-    console.log(temp[0]);
+    // console.log(temp[0]);
     setFileData({ file_id: temp[0].file_id, file_data: temp[0].uploaded_file });
+    // sessionStorage.setItem("fileid", temp[0].file_id);
+    // sessionStorage.setItem("file_data" , temp[0].uploaded_file)
     navigate("/pdfview");
   };
 
@@ -96,6 +100,8 @@ export default function Dashboard() {
     const temp = shareddata?.filter((item) => item.file_id === val);
     // console.log(temp[0]);
     setFileData({ file_id: temp[0].file_id, file_data: temp[0].uploaded_file });
+    // sessionStorage.setItem("fileid", temp[0].file_id);
+    // sessionStorage.setItem("file_data" , temp[0].uploaded_file)
     navigate("/pdfview");
   };
   // console.log(userdata);

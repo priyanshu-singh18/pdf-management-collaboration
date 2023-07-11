@@ -52,7 +52,8 @@ export default function LoginComponent() {
     e.preventDefault();
 
     try {
-      const token = await getToken({ username: username, password: password });
+      const email = username.toLowerCase();
+      const token = await getToken({ username: email, password: password });
       sessionStorage.setItem("token", token.access);
 
       // setIsLoggedIn({ isLoggedIn: true, token: token.access });

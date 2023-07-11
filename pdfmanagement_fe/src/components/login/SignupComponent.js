@@ -40,15 +40,15 @@ export default function SignupComponent() {
 
   const formSubmitHandler = async (e) => {
     e.preventDefault();
-
+    const email = username.toLowerCase();
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const isValidEmail = emailRegex.test(username);
+    const isValidEmail = emailRegex.test(email);
 
     if (fullname === "") {
       setError("Enter Full Name Please");
       return;
     }
-    if (username === "" && !isValidEmail) {
+    if (email === "" && !isValidEmail) {
       setError("Enter Email Please");
       return;
     }
@@ -63,7 +63,7 @@ export default function SignupComponent() {
     try {
       const token = await getToken({
         name: fullname,
-        username: username,
+        username: email,
         password: password,
       });
       sessionStorage.setItem("token", token.Token);

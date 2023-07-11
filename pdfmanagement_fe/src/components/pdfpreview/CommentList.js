@@ -26,7 +26,9 @@ const post_comment = async (data, token) => {
     } else if (error.request) {
       console.error("No response received from the server. Please try again.");
     } else {
-      console.error("An error occurred while posting the comment. Please try again.");
+      console.error(
+        "An error occurred while posting the comment. Please try again."
+      );
     }
   }
 };

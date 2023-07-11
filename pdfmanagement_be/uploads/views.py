@@ -108,7 +108,7 @@ def share_file(request, **kwargss):
     try:
         user = UserModel.objects.get(username=share_to)
     except UserModel.DoesNotExist:
-        return Response({"error":"Error in finding user"}, status=404)
+        return Response({"error":"Recipient email isnt registered on PDF management & collab."}, status=404)
     
     if user.username == request.user.username:
         return Response({"error":"You cannot share your own file"}, status=400)

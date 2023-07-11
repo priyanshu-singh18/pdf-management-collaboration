@@ -141,7 +141,10 @@ export default function Header() {
               type="email"
               placeholder="Enter recipient email"
               value={shareWithEmail}
-              onChange={(e) => setShareWithEmail(e.target.value)}
+              onChange={(e) => {
+                setShareWithEmail(e.target.value);
+                setError("");
+              }}
             />
             <div className={classes["modal-controllers"]}>
               <button onClick={handleShareButton}>Share</button>
