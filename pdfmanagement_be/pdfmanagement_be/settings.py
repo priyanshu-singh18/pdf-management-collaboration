@@ -34,7 +34,7 @@ SECRET_KEY = 'django-insecure-h3g5shs=7hboqjhpw0yt0ulk9*_=bq_ryby7=0j%2sy7u0mbv5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
@@ -44,6 +44,7 @@ if RENDER_EXTERNAL_HOSTNAME:
 # Application definition
 CORS_ALLOWED_ORIGINS = [
     'https://spotdraft-assignment.netlify.app',
+    'http://localhost:3000'
 ]
 
 INSTALLED_APPS = [
@@ -109,13 +110,23 @@ WSGI_APPLICATION = 'pdfmanagement_be.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-'default': dj_database_url.config(
-        # Feel free to alter this value to suit your needs.
-        default=os.getenv('DATABASE_HOST'),
-        conn_max_age=600,
+# DATABASES = {
+# 'default': dj_database_url.config(
+#         # Feel free to alter this value to suit your needs.
+#         default=os.getenv('DATABASE_HOST'),
+#         conn_max_age=600,
 
-    )
+#     )
+# }
+
+DATABASES = {
+        'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv("DATABASE_NAME"),
+        'USER': os.getenv("DATABASE_USER"),
+        'PASSWORD': os.getenv("DATABASE_PASSWORD"),
+        'HOST': os.getenv("DATABASE_HOST")
+    }
 }
 
 
