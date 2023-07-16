@@ -8,6 +8,8 @@ import axios from "axios";
 import Modal from "./Modal";
 import { filedatastate } from "../../context/filedataState";
 import { toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 
 const REACT_APP_BASE_URL = process.env.REACT_APP_BASE_URL;
 
@@ -18,6 +20,7 @@ export default function Header() {
   const { file_id } = useRecoilValue(filedatastate);
   const [formdata, setFormdata] = useState();
   const [isLoading, setIsloading] = useState(false);
+  const [active, setActive] = useState(false);
 
   const token = sessionStorage.getItem("token");
   const logoutHandler = (val) => {
@@ -115,14 +118,24 @@ export default function Header() {
   return (
     <header className={classes.header}>
       <h1>PDF Management and Collaboration</h1>
-      <div className={classes.controller}>
-        {location.pathname === "/dashboard" && (
-          <button onClick={toggleModal}>Upload File</button>
-        )}
-        {location.pathname === "/pdfview" && (
-          <button onClick={toggleModal}>Share File</button>
-        )}
-        {token && <LogoutButton logout={logoutHandler} />}
+      <div className={classes.navlinks}>
+        <div
+          className={classes["menu-icon"]}
+          onClick={() => {
+            setActive(!active);
+          }}
+        >
+          <FontAwesomeIcon icon={active ? faXmark : faBars} />
+        </div>
+        <div className={classes[`nav-items`]}>
+          {location.pathname === "/dashboard" && (
+            <button onClick={toggleModal}>Upload File</button>
+          )}
+          {location.pathname === "/pdfview" && (
+            <button onClick={toggleModal}>Share File</button>
+          )}
+          {token && <LogoutButton logout={logoutHandler} />}
+        </div>
       </div>
       {isModalVisible && location.pathname === "/dashboard" && (
         <Modal onCloseClick={toggleModal}>

@@ -2,12 +2,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 120px;
-  border: 0.5px solid #ced4da;
-  max-width: 500px;
+  /* margin-top: 120px; */
+  border: 1px solid #ced4da;
+  width: 45rem;
   padding: 30px;
   border-radius: 25px;
-  margin-left: 38%;
+  /* font-size: 2rem; */
+  /* min-width: 40rem; */
 }
 
 label {
@@ -16,6 +17,14 @@ label {
   margin-bottom: 5px;
 }
 
+.signup-form p {
+  font-size: 1.6rem;
+  margin-bottom: 5px;
+}
+
+.signup-form h1 {
+  font-size: 4rem;
+}
 /* p {
   margin-bottom: 5px;
 } */
@@ -24,7 +33,7 @@ input {
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  width: 300px;
+  width: 30rem;
 }
 
 button {
@@ -35,6 +44,8 @@ button {
   border-radius: 4px;
   cursor: pointer;
   margin-top: 10px;
+  font-size: 2rem;
+  font-weight: 600;
 }
 
 button:hover {
@@ -51,5 +62,11 @@ button:disabled {
 .button-container {
   display: flex;
   justify-content: space-between;
-  width: 200px;
+  width: 20rem;
+}
+
+@media screen and (max-width: 600px) {
+  .signup-form {
+    width: 38rem;
+  }
 }

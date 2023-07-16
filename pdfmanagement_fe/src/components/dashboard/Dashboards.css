@@ -23,8 +23,10 @@
 
 .files-container-1 {
   display: flex;
-  width: 60%;
   justify-content: space-between;
+  gap: 8rem;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .files-container-2 {
@@ -32,6 +34,9 @@
   border: 1px solid #ced4da;
   padding: 20px;
   border-radius: 24px;
+  /* min-height: 25rem; */
+  width: inherit;
+  align-self: stretch;
 }
 
 .files-container-2 h1 {
@@ -41,7 +46,8 @@
 
 .file-list {
   list-style: none;
-  max-height: 400px;
+  /* min-height: 10rem; */
+  max-height: 40rem;
   padding: 0;
   padding-right: 20px;
 
@@ -71,4 +77,16 @@
 
 .file-list li:last-child {
   margin-bottom: 0;
+}
+@media screen and (max-width: 600px) {
+  .container {
+    margin-top: 0;
+  }
+  .files-container-1 {
+    gap: 2rem;
+  }
+
+  /* .files-container-2 {
+    width: 38rem;
+  } */
 }
