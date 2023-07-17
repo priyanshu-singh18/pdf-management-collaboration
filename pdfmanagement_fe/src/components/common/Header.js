@@ -24,6 +24,7 @@ export default function Header() {
 
   const token = sessionStorage.getItem("token");
   const logoutHandler = (val) => {
+    setActive(false);
     sessionStorage.clear();
     navigate("/");
   };
@@ -127,14 +128,49 @@ export default function Header() {
         >
           <FontAwesomeIcon icon={active ? faXmark : faBars} />
         </div>
-        <div className={classes[`nav-items`]}>
+        <div
+          className={
+            active ? classes["active-nav-container"] : classes[`nav-items`]
+          }
+        >
+          {location.pathname === "/" && (
+            <button
+              onClick={() => {
+                setActive(false);
+                navigate("/signup");
+              }}
+              className={classes["nav-item"]}
+            >
+              Signup
+            </button>
+          )}
+          {location.pathname === "/signup" && (
+            <button
+              onClick={() => {
+                setActive(false);
+                navigate("/");
+              }}
+              className={classes["nav-item"]}
+            >
+              Login
+            </button>
+          )}
           {location.pathname === "/dashboard" && (
-            <button onClick={toggleModal}>Upload File</button>
+            <button onClick={toggleModal} className={classes["nav-item"]}>
+              Upload File
+            </button>
           )}
           {location.pathname === "/pdfview" && (
-            <button onClick={toggleModal}>Share File</button>
+            <button onClick={toggleModal} className={classes["nav-item"]}>
+              Share File
+            </button>
           )}
-          {token && <LogoutButton logout={logoutHandler} />}
+          {token && (
+            <button onClick={logoutHandler} className={classes["nav-item"]}>
+              {" "}
+              Logout{" "}
+            </button>
+          )}
         </div>
       </div>
       {isModalVisible && location.pathname === "/dashboard" && (
