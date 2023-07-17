@@ -133,7 +133,7 @@ export default function Header() {
             active ? classes["active-nav-container"] : classes[`nav-items`]
           }
         >
-          {location.pathname === "/" && (
+          {token && location.pathname === "/" && (
             <button
               onClick={() => {
                 setActive(false);
@@ -144,7 +144,7 @@ export default function Header() {
               Signup
             </button>
           )}
-          {location.pathname === "/signup" && (
+          {token && location.pathname === "/signup" && (
             <button
               onClick={() => {
                 setActive(false);
