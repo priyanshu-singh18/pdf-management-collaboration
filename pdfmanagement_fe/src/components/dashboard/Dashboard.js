@@ -35,6 +35,7 @@ export default function Dashboard() {
 
   const navigate = useNavigate();
   const token = sessionStorage.getItem("token");
+  const useremail = sessionStorage.getItem("useremail");
 
   useEffect(() => {
     (async () => {
@@ -116,8 +117,7 @@ export default function Dashboard() {
           <ListItem
             key={item.file_id}
             serial={index + 1}
-            name={`File ${index + 1}`}
-            uploaded_by={item.uploaded_by_email}
+            name={item.file_name}
             uploaded_at={item.uploaded_at}
             clickedItem={handleItemClickUser}
             file_id={item.file_id}
@@ -134,7 +134,7 @@ export default function Dashboard() {
           <ListItem
             key={item.item_id}
             serial={index + 1}
-            name={`File ${index + 1}`}
+            name={item.file_name}
             uploaded_by={item.uploaded_by_email}
             uploaded_at={item.uploaded_at}
             file_id={item.file_id}
@@ -155,7 +155,9 @@ export default function Dashboard() {
   return (
     <>
       <div className="container">
-        <h1 className="heading">Your Dashboard</h1>
+        <h1 className="heading">
+          Your Dashboard <span className="useremail">({useremail})</span>
+        </h1>
         <div className="files-container-1">
           <div className="files-container-2">
             <h1>Your Files</h1>

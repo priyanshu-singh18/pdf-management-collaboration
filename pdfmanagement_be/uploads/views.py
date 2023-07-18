@@ -14,6 +14,8 @@ import json
 def upload_file(request, **kwargs):
     try:
         parser_classes = [MultiPartParser, FileUploadParser, FormParser]
+        file_name=request.data.get('file_name')
+        file_description=request.data.get('file_description')
         
         file = request.FILES['file']
 
@@ -29,7 +31,7 @@ def upload_file(request, **kwargs):
         except ObjectDoesNotExist:
             return Response({"error":"User not found"}, status=status.HTTP_404_NOT_FOUND)
         
-        Upload.objects.create(uploaded_by_id=user, uploaded_file=file, uploaded_by_email=dummy_email.username)
+        Upload.objects.create(uploaded_by_id=user, uploaded_file=file, uploaded_by_email=dummy_email.username,file_name = file_name,file_description=file_description)
         
         return Response("Working upload" , status=status.HTTP_201_CREATED)
     
@@ -169,7 +171,7 @@ def fetch_comments(request,**kwargs):
                 'comment_id': comment.comment_id,
                 'content': comment.content,
                 'author': comment.author.username,
-                'timestamp': comment.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+                'timestamp': comment.timestamp,
                 'replies': []
             }
 
@@ -179,7 +181,7 @@ def fetch_comments(request,**kwargs):
                     'comment_id': reply.comment_id,
                     'content': reply.content,
                     'author': reply.author.username,
-                    'timestamp': reply.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+                    'timestamp': reply.timestamp
                 }
                 comment_data['replies'].append(reply_data)
 

@@ -57,7 +57,7 @@ export default function LoginComponent() {
       const email = username.toLowerCase();
       const token = await getToken({ username: email, password: password });
       sessionStorage.setItem("token", token.access);
-
+      sessionStorage.setItem("useremail", email)
       // setIsLoggedIn({ isLoggedIn: true, token: token.access });
       navigate("/dashboard");
     } catch (error) {

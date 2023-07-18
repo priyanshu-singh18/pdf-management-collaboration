@@ -71,6 +71,7 @@ export default function SignupComponent() {
         password: password,
       });
       sessionStorage.setItem("token", token.Token);
+      sessionStorage.setItem("useremail", email);
       navigate("/dashboard");
     } catch (error) {
       console.error("Invalid username or password");

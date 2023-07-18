@@ -4,6 +4,8 @@ from users.models import UserModel
 
 class Upload(models.Model):
     file_id = models.AutoField(primary_key=True, unique=True,null=False)
+    file_name = models.CharField(default="PDF File",max_length=120)
+    file_description = models.TextField(default="A short description about PDF File")
     uploaded_file = models.BinaryField(verbose_name='Uploaded File', blank=False)
     uploaded_by_id = models.ForeignKey("users.UserModel", on_delete=models.CASCADE)
     uploaded_by_email = models.EmailField(null=False,default="DUMMY_EMAIL",blank=False)

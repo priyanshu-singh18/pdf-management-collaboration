@@ -1,6 +1,6 @@
 .list-item-container {
   display: flex;
   justify-content: space-between;
-  width: 450px;
+  width: 45rem;
   font-size: 1.6rem;
 }

@@ -3,8 +3,31 @@ import { useRecoilValue } from "recoil";
 import { filedatastate } from "../../context/filedataState";
 import axios from "axios";
 import "./CommentList.css";
+import moment from "moment";
 
 const REACT_APP_BASE_URL = process.env.REACT_APP_BASE_URL;
+
+function getElapsedTime(timestamp) {
+  const commentTime = moment(timestamp);
+  const currentTime = moment();
+  const duration = moment.duration(currentTime.diff(commentTime));
+
+  if (duration.asYears() >= 1) {
+    return `${Math.floor(duration.asYears())} years ago`;
+  } else if (duration.asMonths() >= 1) {
+    return `${Math.floor(duration.asMonths())} months ago`;
+  } else if (duration.asWeeks() >= 1) {
+    return `${Math.floor(duration.asWeeks())} weeks ago`;
+  } else if (duration.asDays() >= 1) {
+    return `${Math.floor(duration.asDays())} days ago`;
+  } else if (duration.asHours() >= 1) {
+    return `${Math.floor(duration.asHours())} hours ago`;
+  } else if (duration.asMinutes() >= 1) {
+    return `${Math.floor(duration.asMinutes())} minutes ago`;
+  } else {
+    return `${Math.floor(duration.asSeconds())} seconds ago`;
+  }
+}
 
 const post_comment = async (data, token) => {
   try {
@@ -67,18 +90,20 @@ const Comment = ({ comment, onUpdate }) => {
 
   const renderReplies = comment.replies.map((reply) => (
     <div key={reply.comment_id} className="reply">
+      <p className="comment-details">
+        By: {reply.author} . {getElapsedTime(reply.timestamp)}
+      </p>
       <p className="comment-content">{reply.content}</p>
-      <p>By: {reply.author}</p>
-      <p>{reply.timestamp}</p>
     </div>
   ));
 
   return (
     <div className="comment">
       <div className="parent-comment">
+        <p className="comment-details">
+          By: {comment.author} . {getElapsedTime(comment.timestamp)}{" "}
+        </p>
         <p className="comment-content">{comment.content}</p>
-        <p>By: {comment.author}</p>
-        <p>{comment.timestamp}</p>
       </div>
       {comment.replies.length > 0 && (
         <button onClick={toggleReplies}>

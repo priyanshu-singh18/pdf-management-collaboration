@@ -17,12 +17,16 @@ export default function ListItem(props) {
 
   var timestr = `${date_object.getHours()}:${date_object.getMinutes()}:${date_object.getSeconds()}`;
   // console.log(timestr);
+  let email_uploaded = "";
+  if (props.uploaded_by) {
+    email_uploaded = props.uploaded_by;
+  }
 
   return (
     <li className="list-item-container" onClick={handleClick}>
       <span className="num">{props.serial}</span>
       <span className="name">{props.name}</span>
-      <span className="email"> {props.uploaded_by}</span>
+      <span className="email"> {email_uploaded}</span>
       <span className="date">{datestr}</span>
       <span className="time">{timestr}</span>
     </li>

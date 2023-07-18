@@ -32,6 +32,11 @@
   display: flex;
   gap: 3rem;
 }
+
+.fileinput {
+  margin-bottom: 10px;
+}
+
 .modal-content {
   margin-top: 20px;
   display: flex;
@@ -44,9 +49,14 @@
   gap: 20px;
 }
 
+.modal-controllers button {
+  font-size: 1.4rem;
+}
+
 .error {
   margin-top: 10px;
   margin-bottom: 10px;
+  font-size: 1.4rem;
   color: red;
 }
 

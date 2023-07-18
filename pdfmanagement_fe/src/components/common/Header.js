@@ -21,6 +21,9 @@ export default function Header() {
   const [formdata, setFormdata] = useState();
   const [isLoading, setIsloading] = useState(false);
   const [active, setActive] = useState(false);
+  const [filename, setFilename] = useState("");
+  const [description, setDescription] = useState("");
+  const [file, setFile] = useState();
 
   const token = sessionStorage.getItem("token");
   const logoutHandler = (val) => {
@@ -33,19 +36,19 @@ export default function Header() {
 
   useEffect(() => {}, [isLoading]);
 
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
-    setFormdata(formData);
-  };
+  // const handleFileUpload = (event) => {
+  //   const file = event.target.files[0];
+  //   const formData = new FormData();
+  //   formData.append("file", file);
+  //   setFormdata(formData);
+  // };
 
   const handleUploadButton = async () => {
     try {
       const upload_file = async () => {
         return await axios.post(
           `${REACT_APP_BASE_URL}uploads/upload`,
-          formdata,
+          formData,
           {
             headers: {
               "Content-Type": "multipart/form-data",
@@ -57,10 +60,20 @@ export default function Header() {
 
       // console.log(resp);
       // setIsLoading(true);
+      const formData = new FormData();
+      formData.append("file", file);
+
+      formData.append("file_name", filename);
+      formData.append("file_description", description);
+      // setFormdata(formData);
+
+      // console.log(formData);
       const resp = await upload_file();
 
       window.location.reload(false);
-      setFormdata("");
+      // setFormdata("");
+      setDescription("");
+      setFilename("");
       setIsloading(true);
     } catch (error) {
       if (error.response) {
@@ -176,7 +189,29 @@ export default function Header() {
       {isModalVisible && location.pathname === "/dashboard" && (
         <Modal onCloseClick={toggleModal}>
           <div className={classes["modal-content"]}>
-            <input type="file" onChange={handleFileUpload} />
+            <input
+              className={classes.fileinput}
+              type="text"
+              onChange={(e) => {
+                setFilename(e.target.value);
+              }}
+              placeholder="Enter File Name"
+            />
+            <input
+              className={classes.fileinput}
+              type="text"
+              onChange={(e) => {
+                setDescription(e.target.value);
+              }}
+              placeholder="Enter File Description"
+            />
+            <input
+              className={classes.fileinput}
+              type="file"
+              onChange={(event) => {
+                setFile(event.target.files[0]);
+              }}
+            />
             <div className={classes["modal-controllers"]}>
               <button onClick={handleUploadButton}>Upload</button>
               <button onClick={toggleModal}>Cancel</button>

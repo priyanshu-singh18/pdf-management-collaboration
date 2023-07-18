@@ -15,6 +15,12 @@
   /* justify-content: center; */
   align-self: stretch;
 }
+
+.comment-details {
+  font-size: 1.4rem;
+  margin: 0;
+  margin-top: 10px;
+}
 .add-comment {
   display: flex;
   align-items: center;
@@ -23,15 +29,20 @@
 }
 .add-comment button {
   margin: 0;
+  font-size: 1.2rem;
 }
 .reply-form input {
   margin-top: 5px;
 }
 
 .parent-comment {
+  padding: 5px;
   border: 1px solid black;
   border-radius: 12px;
   background-color: white;
+  align-items: start;
+  display: flex;
+  flex-direction: column;
 }
 .reply {
   border-bottom: 1px solid black;
@@ -44,6 +55,7 @@
 .comment button {
   margin-top: 10px;
   margin-bottom: 10px;
+  font-size: 1.2rem;
 }
 
 .comment-content {
